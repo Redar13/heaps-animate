@@ -75,6 +75,13 @@ class Animate extends Drawable
 		return true;
 	}
 
+	public function resume():Bool
+	{
+		if (curAnim == null) return false;
+		curAnim.resume();
+		return true;
+	}
+
 	public function stop():Bool
 	{
 		if (curAnim != null)
@@ -239,6 +246,7 @@ class Animation
 	public var speed:Float = 1.0;
 	public var loop:Bool = false;
 	public var isPaused(default, null):Bool = true;
+	public var isFinished(default, null):Bool = true;
 	public var currentFrame(get,set) : Float;
 	public var frames:Array<Int>;
 	public var timeline:Timeline;
@@ -255,19 +263,25 @@ class Animation
 	public function play(atFrame = 0.) {
 		currentFrame = atFrame;
 		isPaused = false;
+        isFinished = false;
 	}
 
 	public function pause() {
 		isPaused = true;
 	}
 
+	public function resume() {
+        if (!isFinished)
+		    isPaused = false;
+	}
+
 	public function stop() {
 		currentFrame = 0;
 		isPaused = true;
+        isFinished = true;
 	}
 
-	public dynamic function onAnimEnd() {
-	}
+	public dynamic function onAnimEnd() {}
 
 	inline function get_currentFrame() {
 		return curFrame;
@@ -305,7 +319,12 @@ class Animation
 		} else if (curFrame >= frames.length) {
 			curFrame = frames.length;
 			flushToTimeline();
-			if (curFrame != prev) onAnimEnd();
+			if (curFrame != prev)
+            {
+				isPaused = true;
+                isFinished = true;
+                onAnimEnd();
+            }
 		}
 	}
 
