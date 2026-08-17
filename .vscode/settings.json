@@ -1,0 +1,12 @@
+{
+	"haxe.enableCompilationServer": false,
+	"haxecheckstyle.codeSimilarityBufferSize": 100,
+	"haxecheckstyle.externalSourceRoots": [
+		"./src",
+		"./sample"
+	],
+	"haxecheckstyle.sourceFolders": [
+		"./src",
+		"./sample"
+	]
+}

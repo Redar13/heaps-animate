@@ -1,0 +1,15 @@
+{
+	"name": "heaps-animate",
+	"description": "Port of the `flixel-animate` library to Heaps",
+    "license": "MIT",
+    "tags": ["heaps", "adobe"],
+	"version": "1.0.0",
+	"releasenote": "First release",
+	"classPath": "src/",
+	"contributors": [
+		"Redar13"
+	],
+	"dependencies": {
+		"heaps": ""
+	}
+}

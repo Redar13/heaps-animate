@@ -1,0 +1,104 @@
+{
+	"baseDefines": [],
+	"checks": [
+		{
+			"props": {
+				"format": "^([a-z][a-zA-Z0-9]*|ID)$",
+				"severity": "IGNORE",
+				"tokens": [
+					"CLASS",
+					"TYPEDEF",
+					"PUBLIC"
+				]
+			},
+			"type": "MemberName"
+		},
+		{
+			"props": {
+				"format": "^_*[a-z][a-zA-Z0-9]*$",
+				"tokens": [
+					"CLASS",
+					"PRIVATE"
+				]
+			},
+			"type": "MemberName"
+		},
+		{
+			"props": {
+				"format": "^\\_*[a-z][a-zA-Z0-9]*$|^__init__$"
+			},
+			"type": "MethodName"
+		},
+		{
+			"props": {
+				"severity": "IGNORE"
+			},
+			"type": "SimplifyBooleanExpression"
+		},
+		{
+			"type": "SimplifyBooleanReturn"
+		},
+		{
+			"type": "UnusedLocalVar"
+		},
+		{
+			"type": "UnnecessaryConstructor"
+		},
+		{
+			"type": "ArrayLiteral"
+		},
+		{
+			"type": "ERegLiteral"
+		},
+		{
+			"props": {
+				"option": "upperCase"
+			},
+			"type": "HexadecimalLiteral"
+		},
+		{
+			"props": {
+				"ignoreRangeOperator": true,
+				"noSpaceAroundUnop": true,
+				"spaceAroundBinop": true,
+				"spaceCatch": "should",
+				"spaceForLoop": "should",
+				"spaceIfCondition": "should",
+				"spaceSwitchCase": "should",
+				"spaceWhileLoop": "should"
+			},
+			"type": "Spacing"
+		},
+		{
+			"type": "DefaultComesLast"
+		},
+		{
+			"props": {
+				"severity": "IGNORE"
+			},
+			"type": "AvoidStarImport"
+		},
+		{
+			"type": "PublicAccessor"
+		},
+		{
+			"type": "ModifierOrder",
+			"props": {
+				"modifiers": [
+					"MACRO",
+					"ABSTRACT",
+					"OVERLOAD",
+					"EXTERN",
+					"OVERRIDE",
+					"INLINE",
+					"PUBLIC_PRIVATE",
+					"STATIC",
+					"DYNAMIC"
+				]
+			}
+		}
+	],
+	"defaultSeverity": "WARNING",
+	"defineCombinations": [],
+	"exclude": {}
+}

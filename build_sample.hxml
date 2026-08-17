@@ -1,0 +1,11 @@
+-cp src
+-cp sample
+-m Main
+
+-D resourcesPath=sample/res
+
+-lib heaps
+-lib hlsdl
+-lib heaps-animate
+
+-hl sample.hl
