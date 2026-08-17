@@ -5,13 +5,17 @@ import h2d.animate.internal.AnimateRenderContext;
 import h2d.animate.internal.FlashTileLayerContent;
 import h2d.animate.internal.Timeline;
 import h2d.animate.internal.shaders.ColorAdd;
+import h2d.col.Matrix;
+
+using h2d.animate.internal.MatrixTools;
 
 class Animate extends Drawable
 {
 	public var curAnim(default, null):Null<Animation> = null;
 	public var curAnimName(default, null):Null<String> = null;
 	public var library(default, set):AnimateLibrary;
-	public var applyStageMatrix(default, set):Bool = false;
+	public var applyStageMatrix:Bool = false;
+	// public var applyStageMatrix(default, set):Bool = false;
 
 	var _animations:Map<String, Animation> = [];
 	var _tileBatcher = new FlashTileLayerContent();
@@ -59,6 +63,7 @@ class Animate extends Drawable
 		{
 			curAnim = _animations.get(name);
 			curAnimName = name;
+			posChanged = true;
 		}
 		if (curAnim != null)
 			curAnim.play(atFrame ?? curAnim.curFrame);
@@ -86,6 +91,7 @@ class Animate extends Drawable
 	{
 		if (curAnim != null)
 		{
+			posChanged = true;
 			curAnimName = null;
 			curAnim.stop();
 			curAnim = null;
@@ -120,16 +126,6 @@ class Animate extends Drawable
 		return [for (i in _animations.keys()) i];
 	}
 
-	override function getBoundsRec( relativeTo : Object, out : h2d.col.Bounds, forSize : Bool ) {
-		super.getBoundsRec(relativeTo, out, forSize);
-		if (curAnim?.timeline != null)
-		{
-			final timeline = curAnim.timeline;
-			var b = forSize ? timeline.getWholeBounds() : timeline.getBounds(timeline.currentFrame);
-			addBounds(relativeTo, out, b.x, b.y, b.width, b.height);
-		}
-	}
-
 	override function draw(ctx:RenderContext)
 	{
 		if (curAnim == null) return;
@@ -155,61 +151,77 @@ class Animate extends Drawable
 		super.onRemove();
 	}
 
+	function prepareAnimateMatrix(matrix:Matrix) {
+		if (this.applyStageMatrix && curAnim != null)
+		{
+			var timelineBounds = curAnim.timeline.getWholeBounds();
+			var stageMatrix = curAnim.timeline.parent.matrix;
+			matrix.multiply(matrix, stageMatrix);
+			matrix.translate(-timelineBounds.x * stageMatrix.a, -timelineBounds.y * stageMatrix.d);
+			// _animateRendererContext.matrix.translate(-timelineBounds.x, -timelineBounds.y);
+		}
+		// _animateRendererContext.includeHidenLayers = includeHidenLayers; // todo?
+	}
 	function prepareAnimateContext(includeHidenLayers:Bool = false) {
 		_animateRendererContext.drawableTarget = this;
 		_animateRendererContext.tileBatcher = _tileBatcher;
-		// _animateRendererContext.includeHidenLayers = includeHidenLayers; // todo?
+		_animateRendererContext.matrix.identity();
+		prepareAnimateMatrix(_animateRendererContext.matrix);
 	}
-	override function calcAbsPos() {
-		if (this.applyStageMatrix && curAnim != null)
+
+	var _matrix = new Matrix();
+	override function getBoundsRec( relativeTo : Object, out : h2d.col.Bounds, forSize : Bool ) {
+		super.getBoundsRec(relativeTo, out, forSize);
+		if (curAnim != null)
 		{
-			var timeline = curAnim.timeline;
-			var timelineBounds = timeline.getWholeBounds();
-			var stageMatrix = timeline.parent.matrix;
-			matA = stageMatrix.a;
-			matB = stageMatrix.b;
-			matC = stageMatrix.c;
-			matD = stageMatrix.d;
-			absX = stageMatrix.x - timelineBounds.x;
-			absY = stageMatrix.y - timelineBounds.y;
-		}
-		else
-		{
-			matA = 1.0;
-			matB = matC = 0;
-			matD = 1.0;
-			absX = absY = 0;
-		}
-		if (parent == null) {
-			var cr, sr;
-			if (rotation == 0) {
-				cr = 1.; sr = 0.;
-				matA *= scaleX;
-				matD *= scaleY;
-			} else {
-				cr = Math.cos(rotation);
-				sr = Math.sin(rotation);
-				matA *= scaleX * cr;
-				matB *= scaleX * sr;
-				matC *= scaleY * -sr;
-				matD *= scaleY * cr;
+			final timeline = curAnim.timeline;
+			_matrix.identity();
+			prepareAnimateMatrix(_matrix);
+			// getMatrix(_matrix);
+			if (forSize)
+			{
+				var b = timeline.getWholeBounds(_matrix);
+				addBounds(relativeTo, out, b.x, b.y, b.width, b.height);
 			}
-			absX += x;
-			absY += y;
-		} else {
-			var tmpA = matA;
-			var tmpB = matB;
-			var tmpC = matC;
-			var tmpD = matD;
-			matA = tmpA * parent.matA + tmpB * parent.matC;
-			matB = tmpA * parent.matB + tmpB * parent.matD;
-			matC = tmpC * parent.matA + tmpD * parent.matC;
-			matD = tmpC * parent.matB + tmpD * parent.matD;
-			absX = absX * parent.matA + absY * parent.matC + parent.absX;
-			absY = absX * parent.matB + absY * parent.matD + parent.absY;
+			else
+			{
+				var b = timeline.getBounds(timeline.currentFrame, _matrix);
+				addBounds(relativeTo, out, b.x, b.y, b.width, b.height);
+			}
 		}
 	}
 
+	/*
+	var _matrix = new Matrix();
+	var _matrix2 = new Matrix();
+	override function calcAbsPos() {
+		if (this.applyStageMatrix && curAnim != null)
+		{
+			var timelineBounds = curAnim.timeline.getWholeBounds();
+			var stageMatrix = curAnim.timeline.parent.matrix;
+			_matrix.copyFrom(stageMatrix);
+			// _matrix.translate(-timelineBounds.x * stageMatrix.a, -timelineBounds.y * stageMatrix.d);
+			_matrix.translate(-timelineBounds.x, -timelineBounds.y);
+		}
+		else
+		{
+			_matrix.identity();
+		}
+		if (rotation != 0)
+			_matrix.rotate(rotation);
+		_matrix.scale(scaleX, scaleY);
+		_matrix.translate(x, y);
+		if (parent != null) {
+			parent.getMatrix(_matrix2);
+			_matrix.multiply(_matrix, _matrix2);
+		}
+		matA = _matrix.a;
+		matB = _matrix.b;
+		matC = _matrix.c;
+		matD = _matrix.d;
+		absX = _matrix.x;
+		absY = _matrix.y;
+	}
 	inline function set_applyStageMatrix(v:Bool):Bool
 	{
 		if (applyStageMatrix != v)
@@ -219,6 +231,7 @@ class Animate extends Drawable
 		}
 		return v;
 	}
+	*/
 
 	function set_library(v)
 	{

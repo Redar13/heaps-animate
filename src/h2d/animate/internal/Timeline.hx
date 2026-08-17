@@ -6,6 +6,7 @@ import h2d.col.Bounds;
 import h2d.col.Matrix;
 import h2d.col.Point;
 
+@:allow(h2d.animate.Animate)
 class Timeline {
 	public var libraryItem:SymbolItem;
 	public var layers:Array<Layer>;
@@ -240,7 +241,8 @@ class Timeline {
 		if (bounds == null)
 			bounds = new Bounds();
 
-		bounds.set(0, 0, 0, 0);
+		// bounds.set(0, 0, 0, 0);
+		bounds.empty();
 
 		if (useCachedBounds)
 		{
@@ -269,16 +271,14 @@ class Timeline {
 			if (frameBounds.isEmpty())
 				continue;
 
-			if (first)
-			{
-				first = false;
-				bounds.load(frameBounds);
-			}
-			else
+			// if (first)
+			// {
+			// 	first = false;
+			// 	bounds.load(frameBounds);
+			// }
+			// else
 				bounds.addBounds(frameBounds);
 		}
-
-		Utils.applyMatrixToBounds(bounds, matrix);
 
 		if (useCachedBounds)
 		{
@@ -286,6 +286,8 @@ class Timeline {
 			cached.load(bounds);
 			_cachedBounds.set(frameIndex, cached);
 		}
+
+		Utils.applyMatrixToBounds(bounds, matrix);
 
 		return bounds;
 	}
@@ -315,7 +317,7 @@ class Timeline {
 	{
 		var tmpRect:Bounds = new Bounds();
 		bounds ??= new Bounds();
-		bounds.set(0, 0, 0, 0);
+		bounds.empty();
 
 		for (i in 0...this.frameCount)
 		{

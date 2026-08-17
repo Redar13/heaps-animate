@@ -24,7 +24,7 @@ class AnimateRenderContext
 	static var _pool:Array<AnimateRenderContext> = [];
 
 	public static function get():AnimateRenderContext {
-		if (_freePool > 0 )
+		if (_freePool > 0)
 			return _pool[--_freePool].identity();
 		return new AnimateRenderContext();
 	}
@@ -63,12 +63,7 @@ class AnimateRenderContext
 
 	inline public function copyFrom(context:AnimateRenderContext):AnimateRenderContext
 	{
-		matrix.a = context.matrix.a;
-		matrix.b = context.matrix.b;
-		matrix.c = context.matrix.c;
-		matrix.d = context.matrix.d;
-		matrix.x = context.matrix.x;
-		matrix.y = context.matrix.y;
+		MatrixTools.copyFrom(matrix, context.matrix);
 		colorTransform.copyFrom(context.colorTransform);
 		frameIndex = context.frameIndex;
 		index = context.index;

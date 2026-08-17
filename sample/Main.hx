@@ -1,3 +1,4 @@
+import hxd.Key;
 import h2d.Object;
 import h2d.animate.internal.elements.DrawableInstance;
 import h2d.col.Bounds;
@@ -10,6 +11,7 @@ import h2d.Anim;
 
 class Main extends App
 {
+	var parent:Object;
 	var atlas:Animate = null;
 	var atlasHitbox:Bitmap = null;
 	var curAtlasHitbox:Bitmap = null;
@@ -32,8 +34,13 @@ class Main extends App
 
 		s2d.defaultSmooth = true;
 
+		// parent = new Object(s2d);
+		// parent.setScale(0.5);
+		// parent.rotate(45);
+		parent = s2d;
+
 		var lib = AnimateLibrary.fromAnimate("./atlas");
-		var animate = new Animate(s2d);
+		var animate = new Animate(parent);
 		animate.library = lib;
 		if (animate.addAnimByTimeline("main", lib.timeline, true))
 		{
@@ -62,10 +69,10 @@ class Main extends App
 		{
 			trace("Failed to load animation");
 		}
-		// animate.rotate(45);
-		// animate.scaleX = 0.5;
 		this.atlas = animate;
 		this.atlas.applyStageMatrix = true;
+		// this.atlas.rotate(45);
+		// this.atlas.scaleX = 0.5;
 
 		var window = hxd.Window.getInstance();
 		var prevX = window.mouseX, prevY = window.mouseY;
@@ -81,18 +88,56 @@ class Main extends App
 					s2d.x += (matrix.x - window.mouseX) / matrix.a * delta;
 					s2d.y += (matrix.y - window.mouseY) / matrix.d * delta;
 				case ERelease:
-					if (e.button != hxd.Key.MOUSE_LEFT) return;
-					isPressed = false;
+					switch e.button
+					{
+						case hxd.Key.MOUSE_LEFT:
+							isPressed = false;
+					}
 				case EPush:
-					if (e.button != hxd.Key.MOUSE_LEFT) return;
-					prevX = window.mouseX;
-					prevY = window.mouseY;
-					isPressed = true;
-				case EMove if (isPressed):
-					s2d.x += e.relX - prevX;
-					s2d.y += e.relY - prevY;
-					prevX = window.mouseX;
-					prevY = window.mouseY;
+					switch e.button
+					{
+						case hxd.Key.MOUSE_LEFT:
+							prevX = window.mouseX;
+							prevY = window.mouseY;
+							isPressed = true;
+					}
+				case EMove:
+					if (isPressed)
+					{
+						var deltaX = window.mouseX - prevX;
+						var deltaY = window.mouseY - prevY;
+						if (Key.isDown(Key.CTRL))
+						{
+							if (Key.isDown(Key.S))
+							{
+								var e = atlas.getSize();
+								if (atlas.scaleX != 0)
+									e.width /= Math.abs(atlas.scaleX) * 2;
+								if (atlas.scaleY != 0)
+									e.height /= Math.abs(atlas.scaleY) * 2;
+								var delta = new h2d.col.Point(deltaX / e.width, deltaY / e.height);
+								delta.rotate(-atlas.rotation);
+								atlas.scaleX += delta.x;
+								atlas.scaleY += delta.y;
+							}
+							else if (Key.isDown(Key.R))
+							{
+								atlas.rotate(-deltaX / 100);
+							}
+							else
+							{
+								atlas.x += deltaX;
+								atlas.y += deltaY;
+							}
+						}
+						else
+						{
+							s2d.x += deltaX;
+							s2d.y += deltaY;
+						}
+						prevX = window.mouseX;
+						prevY = window.mouseY;
+					}
 				default:
 			}
 		});
@@ -103,8 +148,10 @@ class Main extends App
 		super.update(dt);
 		if (atlas != null)
 		{
-			boundsToDrawable(atlasHitbox, atlas.getSize(), 3);
-			boundsToDrawable(curAtlasHitbox, atlas.getBounds(s2d), 0);
+			var size = atlas.getSize();
+			size.offset(atlas.x, atlas.y);
+			boundsToDrawable(atlasHitbox, size, 3);
+			boundsToDrawable(curAtlasHitbox, atlas.getBounds(atlas.parent), 0);
 		}
 		dummyObject?.rotate(dt / 2);
 	}
