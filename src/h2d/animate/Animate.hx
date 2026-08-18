@@ -29,26 +29,26 @@ class Animate extends Drawable
 		this.library = library;
 	}
 
-	inline public function addAnimByFramelabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Bool
+	inline public function addAnimByFramelabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
 	{
 		return addAnim(animName, library?.getAnimByFramelabel(labelName, speed, indices, looped));
 	}
 
-	inline public function addAnimBySymbol(animName:String, symbolName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Bool
+	inline public function addAnimBySymbol(animName:String, symbolName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
 	{
 		return addAnim(animName, library?.getAnimBySymbol(symbolName, speed, indices, looped));
 	}
 
-	inline public function addAnimByTimeline(animName:String, timeline:Timeline, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Bool
+	inline public function addAnimByTimeline(animName:String, timeline:Timeline, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
 	{
 		return addAnim(animName, AnimateLibrary.getAnimByTimeline(timeline, speed, indices, looped));
 	}
 
-	public function addAnim(animName:String, anim:Null<Animation>):Bool
+	public function addAnim(animName:String, anim:Null<Animation>):Null<Animation>
 	{
-		if (anim == null) return false;
-		_animations.set(animName, anim);
-		return true;
+		if (anim != null)
+			_animations.set(animName, anim);
+		return anim;
 	}
 
 	inline public function animExists(name:String):Bool
@@ -257,6 +257,7 @@ class Animate extends Drawable
 class Animation
 {
 	public var speed:Float = 1.0;
+	public var frameRate:Null<Float> = null;
 	public var loop:Bool = false;
 	public var isPaused(default, null):Bool = true;
 	public var isFinished(default, null):Bool = true;
@@ -316,7 +317,7 @@ class Animation
 	{
 		var prev = curFrame;
 		if (!isPaused)
-			curFrame += elapsed * speed * timeline.parent.frameRate;
+			curFrame += elapsed * speed * (frameRate ?? timeline.parent.frameRate);
 		if (curFrame < frames.length)
 		{
 			flushToTimeline();

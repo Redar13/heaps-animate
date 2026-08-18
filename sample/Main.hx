@@ -42,7 +42,7 @@ class Main extends App
 		var lib = AnimateLibrary.fromAnimate("./atlas");
 		var animate = new Animate(parent);
 		animate.library = lib;
-		if (animate.addAnimByTimeline("main", lib.timeline, true))
+		if (animate.addAnimByTimeline("main", lib.timeline, true) != null)
 		{
 			animate.play("main");
 
