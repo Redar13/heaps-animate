@@ -189,7 +189,7 @@ class AnimateLibrary {
 
 	inline static function fixBom(src:String):String
 	{
-        return path.replace(String.fromCharCode(0xFEFF), "");
+        return src.replace(String.fromCharCode(0xFEFF), "");
 	}
 
 	/**
