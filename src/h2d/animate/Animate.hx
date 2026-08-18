@@ -308,7 +308,7 @@ class Animation
 	}
 
 	function flushToTimeline() {
-		timeline.currentFrame = frames[hxd.Math.floor(curFrame)];
+		timeline.currentFrame = frames[hxd.Math.ceil(hxd.Math.curFrame, 0, frames.length - 1)];
 		// timeline.signalFrameChange(frame, this);
 	}
 
