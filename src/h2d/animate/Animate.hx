@@ -56,7 +56,7 @@ class Animate extends Drawable
 		return _animations.exists(name);
 	}
 
-	public function play(name:String, force:Bool, atFrame:Float = 0):Bool
+	public function play(name:String, force:Bool = false, atFrame:Float = 0):Bool
 	{
 		if (!force && curAnimName == name) return false;
 		if (curAnimName != name)
