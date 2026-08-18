@@ -138,7 +138,7 @@ class Animate extends Drawable
 
 	override function sync(ctx:RenderContext) {
 		if (curAnim != null)
-			curAnim.sync(ctx);
+			curAnim.update(ctx.elapsedTime);
 
 		super.sync(ctx);
 	}
@@ -312,11 +312,11 @@ class Animation
 		// timeline.signalFrameChange(frame, this);
 	}
 
-	function sync(ctx:RenderContext)
+	function update(elapsed:Float)
 	{
 		var prev = curFrame;
 		if (!isPaused)
-			curFrame += speed * ctx.elapsedTime * timeline.parent.frameRate;
+			curFrame += elapsed * speed * timeline.parent.frameRate;
 		if (curFrame < frames.length)
 		{
 			flushToTimeline();
