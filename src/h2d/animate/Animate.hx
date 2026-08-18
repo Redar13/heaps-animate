@@ -56,9 +56,9 @@ class Animate extends Drawable
 		return _animations.exists(name);
 	}
 
-	public function play(name:String, ?atFrame:Null<Float>):Bool
+	public function play(name:String, force:Bool, atFrame:Float = 0):Bool
 	{
-		if (atFrame == null && curAnimName == name) return curAnimName != null;
+		if (!force && curAnimName == name) return false;
 		if (curAnimName != name)
 		{
 			curAnim = _animations.get(name);
@@ -66,7 +66,7 @@ class Animate extends Drawable
 			posChanged = true;
 		}
 		if (curAnim != null)
-			curAnim.play(atFrame ?? curAnim.curFrame);
+			curAnim.play(atFrame);
 		else
 			curAnimName = null;
 
@@ -308,7 +308,7 @@ class Animation
 	}
 
 	function flushToTimeline() {
-		timeline.currentFrame = frames[hxd.Math.ceil(hxd.Math.curFrame, 0, frames.length - 1)];
+		timeline.currentFrame = frames[hxd.Math.floor(hxd.Math.clamp(curFrame, 0, frames.length - 1))];
 		// timeline.signalFrameChange(frame, this);
 	}
 

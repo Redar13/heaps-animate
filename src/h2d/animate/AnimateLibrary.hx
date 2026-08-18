@@ -184,7 +184,12 @@ class AnimateLibrary {
 
 	static function getTextFromPath(path:String):String
 	{
-        return Res.load(path).toText().replace(String.fromCharCode(0xFEFF), "");
+        return fixBom(Res.load(path).toText());
+	}
+
+	inline static function fixBom(src:String):String
+	{
+        return path.replace(String.fromCharCode(0xFEFF), "");
 	}
 
 	/**
@@ -467,7 +472,16 @@ class AnimateLibrary {
 				continue;
 			}
 
-			var spritemap:SpritemapJson = Json.parse(jsonResourse.toText());
+			var spritemap:SpritemapJson;
+			try
+			{
+				spritemap = Json.parse(fixBom(jsonResourse.toText()));
+			}
+			catch (e)
+			{
+				trace('Couldnt load ${path + ".json"}.');
+				return null;
+			}
 
 			for (sprite in spritemap.ATLAS.SPRITES)
 			{
