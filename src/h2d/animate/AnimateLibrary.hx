@@ -591,13 +591,26 @@ class AnimateLibrary {
 		{
 			for (symbol in dictionary.iterator())
 				symbol.dispose();
+   dictionary.clear();
+   dictionary = null;
 		}
+
+  if (_tiles != null) 
+  {
+   for (e in _tiles.iterator())
+   {
+    if (e.t == null)
+     continue;
+    e.t.dispose();
+    e.t = null;
+   }
+   _tiles.clear();
+   _tiles = null;
+  }
 
 		stageRect = null;
 		timeline = Utils.dispose(timeline);
 		checkedDirtySymbols = null;
-		dictionary = null;
-		_tiles = null;
 		matrix = null;
 	}
 }
