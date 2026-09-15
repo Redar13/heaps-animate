@@ -582,7 +582,7 @@ class AnimateLibrary {
 		checkedDirtySymbols.resize(0);
 	}
 
-	function dispose():Void
+	public function dispose():Void
 	{
 		// if (_cachedAtlases.exists(path))
 		// 	_cachedAtlases.remove(path);

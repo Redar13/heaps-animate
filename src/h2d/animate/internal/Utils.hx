@@ -81,14 +81,14 @@ class Utils
 		return bounds;
 	}
 
-	extern inline public static function dispose<T:Disposable>(t:T):Null<T>
+	public static function dispose<T:Disposable>(t:T):Null<T>
 	{
 		if (t != null)
 			t.dispose();
 		return null;
 	}
 
-	extern inline public static function disposeArray<T:Disposable>(arr:Array<T>):Null<Array<T>>
+	public static function disposeArray<T:Disposable>(arr:Array<T>):Null<Array<T>>
 	{
 		if (arr != null)
 		{
