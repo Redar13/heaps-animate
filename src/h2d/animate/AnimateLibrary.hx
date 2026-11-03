@@ -227,8 +227,12 @@ class AnimateLibrary {
 		return symbolItem;
 	}
 
+	@:deprecated("Use getAnimByFrameLabel() instead!")
 	public function getAnimByFramelabel(label:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false, timeline:Null<Timeline> = null):Animation {
+		return getAnimByFrameLabel(label, speed, indices, looped, timeline);
+	}
 
+	public function getAnimByFrameLabel(label:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false, timeline:Null<Timeline> = null):Animation {
 		var usedTimeline = timeline ?? this.timeline;
 		var foundFrames:Array<Int> = usedTimeline.findFrameLabelIndices(label);
 		var useableFrames:Array<Int> = [];

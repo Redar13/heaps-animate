@@ -29,7 +29,12 @@ class Animate extends Drawable
 		this.library = library;
 	}
 
-	inline public function addAnimByFramelabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
+	@:deprecated("Use addAnimByFrameLabel() instead!")
+	inline public function addAnimByFramelabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation> {
+		return addAnimByFrameLabel(animName, labelName, speed, indices, looped);
+	}
+
+	inline public function addAnimByFrameLabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
 	{
 		return addAnim(animName, library?.getAnimByFramelabel(labelName, speed, indices, looped));
 	}
