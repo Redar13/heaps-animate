@@ -36,7 +36,7 @@ class Animate extends Drawable
 
 	inline public function addAnimByFrameLabel(animName:String, labelName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
 	{
-		return addAnim(animName, library?.getAnimByFramelabel(labelName, speed, indices, looped));
+		return addAnim(animName, library?.getAnimByFrameLabel(labelName, speed, indices, looped));
 	}
 
 	inline public function addAnimBySymbol(animName:String, symbolName:String, speed:Float = 1.0, indices:Null<Array<Int>> = null, looped:Bool = false):Null<Animation>
